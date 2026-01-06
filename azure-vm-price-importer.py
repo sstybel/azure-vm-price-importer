@@ -1,99 +1,108 @@
-import os
-import json
 import argparse
-import requests
-from datetime import datetime
+
+from az_vm_price import az_oss
+from az_vm_price import az_regions
+from az_vm_price import az_download
+from az_vm_price import az_misc
 
 str_version = "1.00"
 str_app_name ="Azure VM Prices Importer - ver. " + str_version
 str_author = "Copyright (c) 2025 - 2026 by Sebastian Stybel, www.BONO.Edu.PL"
 
-url_currencies = "https://azure.microsoft.com/api/v2/currencies/"
-url_regions = "https://azure.microsoft.com/api/v2/pricing/calculator/regions/"
-url_resources = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/resources/"
-url_oss = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/dropdowns/"
-url_sku_details = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/details/" # url_sku_details + "{os}/"
-url_sku_region = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/" # url_sku_region + "{os}/" + "{region}/"
+path = ".\\az_data\\"
 
 file_currencies = "azure_currencies"
 file_regions = "azure_regions" 
 file_resources = "azure_resources"
 file_oss = "azure_oss"
 file_sku_details = "azure_sku_details" # file_sku_details + "_{os}"
+file_sku_calculator = "azure_sku_calculator" # file_sku_calculator + "_{region}"
 file_sku_region = "azure_sku_region" # file_sku_region + "_{os}_{region}"
 
-filename_currencies = ""
-filename_regions = "" 
-filename_resources = ""
-filename_oss = ""
-filename_sku_details = []
-filename_sku_region = []
+azure_oss = {}
+azure_regions = {}
+azure_vm_series = {}
+azure_initial_data = {}
+azure_detail_price_data = {}
+azure_regions_prices_data = {}
+azure_calculator_price_data = {}
 
-def temp_file_name(filename, prefix_filename="temp", fileextension=".json"):
-    str_timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+is_delete_files_enabled = True
+is_delete_directory_enabled = True
+is_logging_enabled = True
+is_silent_enabled = False
 
-    return f"{prefix_filename}_{filename}_{str_timestamp}{fileextension}"
+azure_prices_of_region = "poland-central"
+#azure_prices_of_region = "all"
 
-def download_url_to_file(url, output_file):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        
-        with open(output_file, 'w', encoding='utf-8') as file:
-            file.write(response.text)
-
-        result = f"OK: Downloaded {len(response.content)} bytes from \"{url}\" to \"{output_file}\" file."
-    except requests.exceptions.RequestException as e:
-        result = f"ERR-URL: {e}"
-    except IOError as e:
-        result = f"ERR-FILE: {e}"
-
-    return result
-
-def download_azure_data():
-    global filename_currencies, filename_regions, filename_resources, filename_oss, filename_sku_details, filename_sku_region
-
-    results = []
-
-    filename_currencies = temp_file_name(file_currencies)
-    filename_regions = temp_file_name(file_regions)
-    filename_resources = temp_file_name(file_resources)
-    filename_oss = temp_file_name(file_oss)
-
-    results.append(download_url_to_file(url_currencies, filename_currencies))
-    results.append(download_url_to_file(url_regions, filename_regions))
-    results.append(download_url_to_file(url_resources, filename_resources))
-    results.append(download_url_to_file(url_oss, filename_oss))
-    
-    return results
-
-def delete_azure_data():
-    results = []
-
-    files_to_delete = [
-        filename_currencies,
-        filename_regions,
-        filename_resources,
-        filename_oss
-    ] + filename_sku_details + filename_sku_region
-
-    for file in files_to_delete:
-        try:
-            if os.path.exists(file):
-                os.remove(file)
-                results.append(f"OK: Deleted file: {file}")
-            else:
-                results.append(f"ERR-FILE: File not found, cannot delete: {file}")
-        except Exception as e:
-            results.append(f"ERR-FILE: Error deleting file {file}: {e}")
-
-    return results
+log_filename = ".\\azure_vm_price_importer.log"
+csv_output_filename = ".\\azure_vm_prices.csv"
+xlsx_output_filename = ".\\azure_vm_prices.xlsx"
+json_output_filename = ".\\azure_vm_prices.json"
 
 if __name__ == "__main__":
-    results = download_azure_data()
-    for result in results:
-        print(result)
+    az_misc.log_create(log_filename, is_logging_enabled)
+    az_misc.print_app_title(str_app_name, str_author, is_silent_enabled)
+    az_misc.log_app_title(log_filename, str_app_name, str_author, is_logging_enabled)
+    az_misc.print_start_logs(log_filename, is_silent_enabled)
+    az_misc.log_start_logs(log_filename, is_logging_enabled)
 
-    results = delete_azure_data()
-    for result in results:
-        print(result)
+    logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    logs, azure_oss = az_oss.az_list_oss(azure_initial_data['oss'], is_silent_enabled, is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+    
+    logs, azure_vm_series = az_oss.az_list_vm_series(azure_initial_data['oss'], is_silent_enabled, is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    logs, azure_regions = az_regions.az_list_regions(azure_initial_data['regions'], is_silent_enabled, is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    logs, azure_detail_price_data, azure_regions_prices_data = az_download.az_download_regions_prices_data(path=path, file_sku_details=file_sku_details, file_sku_region=file_sku_region, az_region=azure_prices_of_region, az_oss=azure_oss, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    logs, azure_calculator_price_data = az_download.az_download_calculator_prices_data(path=path, file_sku_calculator=file_sku_calculator, az_region=azure_prices_of_region, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+    az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    if is_delete_files_enabled:
+        files_to_delete = azure_initial_data | azure_detail_price_data | azure_regions_prices_data | azure_calculator_price_data
+        logs = az_misc.az_delete_directory(path, files_to_delete, is_delete_directory_enabled, is_logging_enabled)
+        az_misc.print_cleanup_files(path=path, count_files=len(files_to_delete), delete_directory=is_delete_directory_enabled, is_silent_enabled=is_silent_enabled)
+        az_misc.log_cleanup_files(log_filename, path=path, count_files=len(files_to_delete), delete_directory=is_delete_directory_enabled, is_logging_enabled=is_logging_enabled)
+        az_misc.log_messages(log_filename, logs, is_logging_enabled)
+
+    az_misc.print_stop_logs(log_filename, is_silent_enabled)
+    az_misc.log_stop_logs(log_filename, is_logging_enabled) 
+
+    az_misc.print_end_process(is_silent_enabled)
+    az_misc.log_end_process(log_filename, is_logging_enabled)
+
+'''''
+    is_created = create_temp_directory()
+    print(f"Creating temporary directory: {path_temp}\n")
+    with open(log_filename, 'a', encoding='utf-8') as log_file:
+        log_file.write(f"Creating temporary directory: {path_temp}\n\n")
+        log_file.write(f"{is_created}\n")
+
+    if is_created.startswith("OK"):
+        results = download_azure_data()
+        if is_logging_enabled:
+            with open(log_filename, 'a', encoding='utf-8') as log_file:
+                for result in results:
+                    log_file.write(result + "\n")
+
+        results, result_data = create_azure_prices_list()
+        if is_logging_enabled:
+            with open(log_filename, 'a', encoding='utf-8') as log_file:
+                for result in results:
+                    log_file.write(result + "\n")
+        with open(json_output_filename, 'w', encoding='utf-8') as json_file:
+            json.dump(result_data, json_file, indent=4)
+            print(f"JSON file created: {json_output_filename}\n")
+        if is_logging_enabled:
+            with open(log_filename, 'a', encoding='utf-8') as log_file:
+                log_file.write(f"JSON file created: {json_output_filename}\n\n")
+
+
+'''
