@@ -38,7 +38,7 @@ is_silent_enabled = False
 is_save_pack = True
 
 azure_prices_of_region = "poland-central"
-azure_prices_of_region = "all"
+#azure_prices_of_region = "all"
 
 log_filename = ".\\azure_vm_price_importer.log"
 

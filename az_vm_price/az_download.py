@@ -194,7 +194,7 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                     else:
                         if not enable_silent:
                             print(f"Downloaded: {sku_region_file}")
-                        results_sku_region.update({f"sku_region_{az_os}_{az_region}": sku_region_file})
+                        results_sku_region.update({f"sku_region_{az_os}_{az_region_name}": sku_region_file})
                         j += 1
                     if enable_logging:
                         logs.append(result_download)
