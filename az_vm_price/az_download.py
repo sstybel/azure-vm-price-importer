@@ -30,11 +30,12 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             dir_info = result.split(":")[1].strip()
             print(f"{dir_info}")
         
-        with alive_bar(4, title="Downloading") as bar:
+        with alive_bar(4, title="Downloading", disable=enable_silent) as bar:
             filename_currencies = az_misc.az_create_filename(file_currencies, path=path, prefix_filename="az", fileextension=".json")
             bar_item = f"{filename_currencies}"
             bar_item = bar_item[len(path):]
-            bar.text = bar_item
+            if not enable_silent:
+                bar.text = bar_item
             result_download = az_misc.az_download_url_to_filename(url_currencies, filename_currencies)
             if result_download.startswith("ERR"):
                 if not enable_silent:
@@ -46,12 +47,14 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
                 i += 1
             if enable_logging:
                 logs.append(result_download)
-            bar()
+            if not enable_silent:
+                bar()
 
             filename_resources = az_misc.az_create_filename(file_resources, path=path, prefix_filename="az", fileextension=".json")
             bar_item = f"{filename_resources}"
             bar_item = bar_item[len(path):]
-            bar.text = bar_item
+            if not enable_silent:
+                bar.text = bar_item
             result_download = az_misc.az_download_url_to_filename(url_resources, filename_resources)
             if result_download.startswith("ERR"):
                 if not enable_silent:
@@ -63,12 +66,14 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
                 i += 1
             if enable_logging:
                 logs.append(result_download)
-            bar()
+            if not enable_silent:
+                bar()
 
             filename_regions = az_misc.az_create_filename(file_regions, path=path, prefix_filename="az", fileextension=".json")
             bar_item = f"{filename_regions}"
             bar_item = bar_item[len(path):]
-            bar.text = bar_item
+            if not enable_silent:
+                bar.text = bar_item
             result_download = az_misc.az_download_url_to_filename(url_regions, filename_regions)
             if result_download.startswith("ERR"):
                 if not enable_silent:
@@ -80,12 +85,14 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
                 i += 1
             if enable_logging:
                 logs.append(result_download)
-            bar()
+            if not enable_silent:
+                bar()
 
             filename_oss = az_misc.az_create_filename(file_oss, path=path, prefix_filename="az", fileextension=".json")
             bar_item = f"{filename_oss}"
             bar_item = bar_item[len(path):]
-            bar.text = bar_item
+            if not enable_silent:
+                bar.text = bar_item
             result_download = az_misc.az_download_url_to_filename(url_oss, filename_oss)
             if result_download.startswith("ERR"):
                 if not enable_silent:
@@ -97,7 +104,8 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
                 i += 1
             if enable_logging:
                 logs.append(result_download)
-            bar()
+            if not enable_silent:
+                bar()
         
         end_download = datetime.now()
         
@@ -147,13 +155,14 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
         i = 0
         j = 0
 
-        with alive_bar(max_bar, title="Downloading") as bar:
+        with alive_bar(max_bar, title="Downloading", disable=enable_silent) as bar:
             for az_os in az_oss:
                 sku_details_file = az_misc.az_create_filename(file_sku_details + f"_{az_os}", path=path, prefix_filename="az", fileextension=".json")
                 sku_details_url = url_sku_details + f"{az_os}/"
                 bar_item = f"{sku_details_file}"
                 bar_item = bar_item[len(path):]
-                bar.text = bar_item
+                if not enable_silent:
+                    bar.text = bar_item
                 result_download = az_misc.az_download_url_to_filename(sku_details_url, sku_details_file)
                 if result_download.startswith("ERR"):
                     if not enable_silent:
@@ -165,7 +174,8 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                     i += 1
                 if enable_logging:
                     logs.append(result_download)
-                bar()
+                if not enable_silent:
+                    bar()
 
                 for az_region_name in az_regions:
                     if az_region != "" and az_region != "all":
@@ -175,7 +185,8 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                     sku_region_url = url_sku_region + f"{az_os}/{az_region_name}/"
                     bar_item = f"{sku_region_file}"
                     bar_item = bar_item[len(path):]
-                    bar.text = bar_item
+                    if not enable_silent:
+                        bar.text = bar_item
                     result_download = az_misc.az_download_url_to_filename(sku_region_url, sku_region_file)
                     if result_download.startswith("ERR"):
                         if not enable_silent:
@@ -187,7 +198,8 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                         j += 1
                     if enable_logging:
                         logs.append(result_download)
-                    bar()
+                    if not enable_silent:
+                        bar()
 
         k = i + j
 
@@ -237,7 +249,7 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
 
         i = 0
 
-        with alive_bar(max_bar, title="Downloading") as bar:
+        with alive_bar(max_bar, title="Downloading", disable=enable_silent) as bar:
             for az_region_name in az_regions:
                 if az_region != "" and az_region != "all":
                     if az_region_name != az_region:
@@ -246,7 +258,8 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
                 sku_calculator_url = url_sku_calculator + f"{az_region_name}/"
                 bar_item = f"{sku_calculator_file}"
                 bar_item = bar_item[len(path):]
-                bar.text = bar_item
+                if not enable_silent:
+                    bar.text = bar_item
                 result_download = az_misc.az_download_url_to_filename(sku_calculator_url, sku_calculator_file)
                 if result_download.startswith("ERR"):
                     if not enable_silent:
@@ -258,7 +271,8 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
                     i += 1
                 if enable_logging:
                     logs.append(result_download)
-                bar()
+                if not enable_silent:
+                    bar()
 
         end_download = datetime.now()
     

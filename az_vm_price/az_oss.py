@@ -38,13 +38,13 @@ def az_list_vm_series(filename_oss="azure_oss", enable_silent=False, enable_logg
                 dict_series = {az_series: series_list[az_series]}
                 series.update(dict_series)
             if not enable_silent:
-                print(f"Loaded {len(series)} vm series from file {filename_oss}.")
+                print(f"Loaded {len(series)} VMs series from file {filename_oss}.")
             if enable_logging:
-                logs.append(f"OK: Loaded {len(series)} vm series from file {filename_oss}.") 
+                logs.append(f"OK: Loaded {len(series)} VMs series from file {filename_oss}.") 
     except Exception as e:
         if not enable_silent:
-            print(f"Unable to read vm series from file {filename_oss}: {e}")
+            print(f"Unable to read VMs series from file {filename_oss}: {e}")
         if enable_logging:
-            logs.append(f"ERR-FILE: Unable to read vm series from file {filename_oss}: {e}")
+            logs.append(f"ERR-FILE: Unable to read VMs series from file {filename_oss}: {e}")
     
     return logs, series
