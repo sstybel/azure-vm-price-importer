@@ -1,4 +1,4 @@
-az_geographicalalal = {
+az_geographical = {
     "united-states": {
         "country_name": "United States",
         "geographical": "north-america",
@@ -151,15 +151,14 @@ az_geographicalalal = {
     }
 }
 
-def az_geographicalal_by_country(country_key):
-    return az_geographicalalal[country_key]
+def az_geographical_by_country(country_key):
+    return az_geographical[country_key]
 
 def az_geographical_name_by_country(country_key):
-    return az_geographicalalal[country_key]["geographical_name"]
-
+    return az_geographical[country_key]["geographical_name"]
 
 def az_geographical_key_by_country(country_key):
-    return az_geographicalalal[country_key]["geographical"]
+    return az_geographical[country_key]["geographical"]
 
 def az_country_name_by_country(country_key):
-    return az_geographicalalal[country_key]["country_name"]
+    return az_geographical[country_key]["country_name"]
