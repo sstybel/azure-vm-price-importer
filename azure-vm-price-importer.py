@@ -35,12 +35,16 @@ is_delete_files_enabled = True
 is_delete_directory_enabled = True
 is_logging_enabled = True
 is_silent_enabled = False
+is_load_pack = True
 is_save_pack = True
 
 azure_prices_of_region = "poland-central"
 #azure_prices_of_region = "all"
 
 log_filename = ".\\azure_vm_price_importer.log"
+
+azpx_input_filename = ".\\az_price_data_20260107111512.azpx"
+azpx_input_filename = ".\\az_price_data_20260107122903.azpx"
 
 csv_output_filename = ".\\azure_vm_prices.csv"
 xlsx_output_filename = ".\\azure_vm_prices.xlsx"
@@ -55,8 +59,12 @@ if __name__ == "__main__":
     az_infos.print_start_logs(log_filename, is_silent_enabled)
     az_logs.log_start_logs(log_filename, is_logging_enabled)
 
-    logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
-    az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    if not is_load_pack:
+        logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    else:
+        logs, path, azure_prices_of_region, azure_initial_data, azure_detail_price_data, azure_regions_prices_data, azure_calculator_price_data, azure_config_pack = az_pack.az_load_config_pack(path=".\\", pack_filename=azpx_input_filename, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)        
 
     logs, azure_oss = az_oss.az_list_oss(azure_initial_data['oss'], is_silent_enabled, is_logging_enabled)
     az_logs.log_messages(log_filename, logs, is_logging_enabled)
@@ -67,14 +75,17 @@ if __name__ == "__main__":
     logs, azure_regions = az_regions.az_list_regions(azure_initial_data['regions'], is_silent_enabled, is_logging_enabled)
     az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
-    logs, azure_detail_price_data, azure_regions_prices_data = az_download.az_download_regions_prices_data(path=path, file_sku_details=file_sku_details, file_sku_region=file_sku_region, az_region=azure_prices_of_region, az_oss=azure_oss, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
-    az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    if not is_load_pack:
+        logs, azure_detail_price_data, azure_regions_prices_data = az_download.az_download_regions_prices_data(path=path, file_sku_details=file_sku_details, file_sku_region=file_sku_region, az_region=azure_prices_of_region, az_oss=azure_oss, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
-    logs, azure_calculator_price_data = az_download.az_download_calculator_prices_data(path=path, file_sku_calculator=file_sku_calculator, az_region=azure_prices_of_region, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
-    az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    if not is_load_pack:
+        logs, azure_calculator_price_data = az_download.az_download_calculator_prices_data(path=path, file_sku_calculator=file_sku_calculator, az_region=azure_prices_of_region, az_regions=azure_regions, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
-    logs, azure_config_pack = az_pack.az_save_config_pack(path=path, az_region=azure_prices_of_region, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
-    az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    if not is_load_pack and is_save_pack:
+        logs, azure_config_pack = az_pack.az_save_config_pack(path=path, az_region=azure_prices_of_region, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_delete_files_enabled:
         files_to_delete = azure_initial_data | azure_detail_price_data | azure_regions_prices_data | azure_calculator_price_data | azure_config_pack
