@@ -5,6 +5,7 @@ from az_vm_price import az_oss
 from az_vm_price import az_regions
 from az_vm_price import az_download
 from az_vm_price import az_export_json
+from az_vm_price import az_export_csv
 from az_vm_price import az_pack
 from az_vm_price import az_prices
 from az_vm_price import az_infos
@@ -42,6 +43,7 @@ is_load_pack = True
 is_save_pack = True
 is_import_json = True
 is_export_json = True
+is_export_csv = True
 
 azure_prices_of_region = "poland-central"
 #azure_prices_of_region = "all"
@@ -51,9 +53,12 @@ log_filename = ".\\azure_vm_price_importer.log"
 azpx_input_filename = ".\\az_price_data_20260107111512.azpx"
 #azpx_input_filename = ".\\az_price_data_20260107122903.azpx"
 
-csv_output_filename = ".\\azure_vm_prices.csv"
-xlsx_output_filename = ".\\azure_vm_prices.xlsx"
-json_output_filename = ".\\azure_vm_prices.json"
+csv_prices_output_filename = ".\\azure_vm_prices.csv"
+csv_prices_currencies_output_filename = ".\\azure_vm_prices_currencies.csv"
+
+xlsx_prices_output_filename = ".\\azure_vm_prices.xlsx"
+
+json_prices_output_filename = ".\\azure_vm_prices-v02.json"
 
 if __name__ == "__main__":
     start_process = datetime.now()
@@ -98,10 +103,14 @@ if __name__ == "__main__":
         logs, azure_prices_list = az_prices.az_prices_list_for_region(az_region=azure_prices_of_region, az_regions=azure_regions, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
-        logs = az_export_json.az_export_prices_list_to_json(json_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        logs = az_export_json.az_export_prices_list_to_json(json_prices_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
     else:
-        logs, azure_prices_list = az_export_json.az_import_prices_list_from_json(json_output_filename, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        logs, azure_prices_list = az_export_json.az_import_prices_list_from_json(json_prices_output_filename, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+
+    if is_export_csv:
+        logs = az_export_csv.az_export_prices_list_to_csv(csv_prices_output_filename, csv_prices_currencies_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_delete_files_enabled:
@@ -119,32 +128,3 @@ if __name__ == "__main__":
 
     az_infos.print_end_process(time_process=delta_process, is_silent_enabled=is_silent_enabled)
     az_logs.log_end_process(time_process=delta_process, log_filename=log_filename, is_logging_enabled=is_logging_enabled)
-
-'''''
-    is_created = create_temp_directory()
-    print(f"Creating temporary directory: {path_temp}\n")
-    with open(log_filename, 'a', encoding='utf-8') as log_file:
-        log_file.write(f"Creating temporary directory: {path_temp}\n\n")
-        log_file.write(f"{is_created}\n")
-
-    if is_created.startswith("OK"):
-        results = download_azure_data()
-        if is_logging_enabled:
-            with open(log_filename, 'a', encoding='utf-8') as log_file:
-                for result in results:
-                    log_file.write(result + "\n")
-
-        results, result_data = create_azure_prices_list()
-        if is_logging_enabled:
-            with open(log_filename, 'a', encoding='utf-8') as log_file:
-                for result in results:
-                    log_file.write(result + "\n")
-        with open(json_output_filename, 'w', encoding='utf-8') as json_file:
-            json.dump(result_data, json_file, indent=4)
-            print(f"JSON file created: {json_output_filename}\n")
-        if is_logging_enabled:
-            with open(log_filename, 'a', encoding='utf-8') as log_file:
-                log_file.write(f"JSON file created: {json_output_filename}\n\n")
-
-
-'''
