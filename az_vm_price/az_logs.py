@@ -43,8 +43,10 @@ def log_cleanup_files(log_filename, path, count_files, delete_directory=False, i
             else:
                 log_file.write(f"Remove files {count_files} in directory {path}\n")
 
-def log_end_process(log_filename, is_logging_enabled=False):
+def log_end_process(time_process, log_filename, is_logging_enabled=False):
     if is_logging_enabled:
         with open(log_filename, 'a', encoding='utf-8') as log_file:
+            if time_process.total_seconds() > 0:
+                log_file.write(f"Total processing time: {time_process}\n")
             log_file.write("Processing completed.\n")
     log_line(log_filename, is_logging_enabled)

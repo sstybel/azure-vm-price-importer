@@ -3,7 +3,7 @@ import json
 import zipfile
 from alive_progress import alive_bar
 
-def az_save_config_pack(path=".\\temp\\", az_region="all", initial_data=None, detail_price_data=None, regions_prices_data=None, calculator_price_data=None, enable_silent=False, enable_logging=False):
+def az_save_config_pack(path=".\\temp\\", az_region="all", initial_data=None, detail_price_data=None, regions_prices_data=None, calculator_price_data=None, enable_silent=False, enable_logging=True):
     logs = []
     config_pack = {}
 

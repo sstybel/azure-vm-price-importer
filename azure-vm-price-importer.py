@@ -1,9 +1,12 @@
 import argparse
+from datetime import datetime
 
 from az_vm_price import az_oss
 from az_vm_price import az_regions
 from az_vm_price import az_download
+from az_vm_price import az_export_json
 from az_vm_price import az_pack
+from az_vm_price import az_prices
 from az_vm_price import az_infos
 from az_vm_price import az_logs
 from az_vm_price import az_misc
@@ -37,6 +40,8 @@ is_logging_enabled = True
 is_silent_enabled = False
 is_load_pack = True
 is_save_pack = True
+is_import_json = True
+is_export_json = True
 
 azure_prices_of_region = "poland-central"
 #azure_prices_of_region = "all"
@@ -44,13 +49,15 @@ azure_prices_of_region = "poland-central"
 log_filename = ".\\azure_vm_price_importer.log"
 
 azpx_input_filename = ".\\az_price_data_20260107111512.azpx"
-azpx_input_filename = ".\\az_price_data_20260107122903.azpx"
+#azpx_input_filename = ".\\az_price_data_20260107122903.azpx"
 
 csv_output_filename = ".\\azure_vm_prices.csv"
 xlsx_output_filename = ".\\azure_vm_prices.xlsx"
 json_output_filename = ".\\azure_vm_prices.json"
 
 if __name__ == "__main__":
+    start_process = datetime.now()
+
     path = az_misc.az_create_pathname(pathname, path=path)
 
     az_logs.log_create(log_filename, is_logging_enabled)
@@ -63,7 +70,7 @@ if __name__ == "__main__":
         logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
     else:
-        logs, path, azure_prices_of_region, azure_initial_data, azure_detail_price_data, azure_regions_prices_data, azure_calculator_price_data, azure_config_pack = az_pack.az_load_config_pack(path=".\\", pack_filename=azpx_input_filename, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        logs, path, azure_prices, azure_initial_data, azure_detail_price_data, azure_regions_prices_data, azure_calculator_price_data, azure_config_pack = az_pack.az_load_config_pack(path=".\\", pack_filename=azpx_input_filename, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)        
 
     logs, azure_oss = az_oss.az_list_oss(azure_initial_data['oss'], is_silent_enabled, is_logging_enabled)
@@ -87,6 +94,16 @@ if __name__ == "__main__":
         logs, azure_config_pack = az_pack.az_save_config_pack(path=path, az_region=azure_prices_of_region, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
+    if not is_import_json and is_export_json:
+        logs, azure_prices_list = az_prices.az_prices_list_for_region(az_region=azure_prices_of_region, az_regions=azure_regions, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+
+        logs = az_export_json.az_export_prices_list_to_json(json_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    else:
+        logs, azure_prices_list = az_export_json.az_import_prices_list_from_json(json_output_filename, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+
     if is_delete_files_enabled:
         files_to_delete = azure_initial_data | azure_detail_price_data | azure_regions_prices_data | azure_calculator_price_data | azure_config_pack
         logs = az_misc.az_delete_directory(path, files_to_delete, is_delete_directory_enabled, is_logging_enabled)
@@ -97,8 +114,11 @@ if __name__ == "__main__":
     az_infos.print_stop_logs(log_filename, is_silent_enabled)
     az_logs.log_stop_logs(log_filename, is_logging_enabled) 
 
-    az_infos.print_end_process(is_silent_enabled)
-    az_logs.log_end_process(log_filename, is_logging_enabled)
+    end_process = datetime.now()
+    delta_process = end_process - start_process 
+
+    az_infos.print_end_process(time_process=delta_process, is_silent_enabled=is_silent_enabled)
+    az_logs.log_end_process(time_process=delta_process, log_filename=log_filename, is_logging_enabled=is_logging_enabled)
 
 '''''
     is_created = create_temp_directory()

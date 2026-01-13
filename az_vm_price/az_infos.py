@@ -20,8 +20,10 @@ def print_stop_logs(log_filename, is_silent_enabled=False):
         print(f"Log ended at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         print(f"Logging is disabled in log file: {log_filename}")
 
-def print_end_process(is_silent_enabled=False):
+def print_end_process(time_process, is_silent_enabled=False):
     if not is_silent_enabled:
+        if time_process.total_seconds() > 0:
+            print(f"Total processing time: {time_process}")
         print("Processing completed.")
         print_line()
 
