@@ -98,6 +98,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                 j += 1
 
                 bool_price_available = False
+                bool_price_hybridbenefit = False
                 str_detail = detail
                 bool_isbasevm = sku_detail[detail]['isBaseVm']
                 bool_haspaygo = sku_detail[detail]['hasPayGo']
@@ -163,6 +164,12 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                         num_cost_per_hour_one_year_savings = 0.0
                         num_cost_per_hour_three_year_savings = 0.0
                         num_cost_per_hour_spot = 0.0
+                        num_cost_per_hour_hybridbenefit = 0.0
+                        num_cost_per_hour_one_year_reserved_hybridbenefit = 0.0
+                        num_cost_per_hour_three_year_reserved_hybridbenefit = 0.0
+                        num_cost_per_hour_one_year_savings_hybridbenefit = 0.0
+                        num_cost_per_hour_three_year_savings_hybridbenefit = 0.0
+                        num_cost_per_hour_spot_hybridbenefit = 0.0
                         if len(data_sku_region[str_detail])>0:
                             bool_price_available = True
                             if 'perhour' in data_sku_region[str_detail]:
@@ -177,12 +184,37 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                                 num_cost_per_hour_three_year_savings = data_sku_region[str_detail]["perunitthreeyearsavings"]
                             if 'perhourspot' in data_sku_region[str_detail]:
                                 num_cost_per_hour_spot = data_sku_region[str_detail]["perhourspot"]
+                            if 'perhourhybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_hybridbenefit = data_sku_region[str_detail]['perhourhybridbenefit']
+                            if 'perhouroneyearreservedhybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_one_year_reserved_hybridbenefit = data_sku_region[str_detail]["perhouroneyearreservedhybridbenefit"]
+                            if 'perhourthreeyearreservedhybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_three_year_reserved_hybridbenefit = data_sku_region[str_detail]["perhourthreeyearreservedhybridbenefit"]
+                            if 'perunitoneyearsavingshybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_one_year_savings_hybridbenefit = data_sku_region[str_detail]["perunitoneyearsavingshybridbenefit"]
+                            if 'perunitthreeyearsavingshybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_three_year_savings_hybridbenefit = data_sku_region[str_detail]["perunitthreeyearsavingshybridbenefit"]
+                            if 'perhourspothybridbenefit' in data_sku_region[str_detail]:
+                                num_cost_per_hour_spot_hybridbenefit = data_sku_region[str_detail]["perhourspothybridbenefit"]
                         num_cost_per_month = num_cost_per_hour * 730
                         num_cost_per_month_one_year_reserved = num_cost_per_hour_one_year_reserved * 730
                         num_cost_per_month_three_year_reserved = num_cost_per_hour_three_year_reserved * 730
                         num_cost_per_month_one_year_savings = num_cost_per_hour_one_year_savings * 730
                         num_cost_per_month_three_year_savings = num_cost_per_hour_three_year_savings * 730
                         num_cost_per_month_spot = num_cost_per_hour_spot * 730
+                        num_cost_per_month_hybridbenefit = num_cost_per_hour_hybridbenefit * 730
+                        num_cost_per_month_one_year_reserved_hybridbenefit = num_cost_per_hour_one_year_reserved_hybridbenefit * 730
+                        num_cost_per_month_three_year_reserved_hybridbenefit = num_cost_per_hour_three_year_reserved_hybridbenefit * 730
+                        num_cost_per_month_one_year_savings_hybridbenefit = num_cost_per_hour_one_year_savings_hybridbenefit * 730
+                        num_cost_per_month_three_year_savings_hybridbenefit = num_cost_per_hour_three_year_savings_hybridbenefit * 730
+                        num_cost_per_month_spot_hybridbenefit = num_cost_per_hour_spot_hybridbenefit * 730
+                        if (num_cost_per_hour_hybridbenefit > 0.0) or (num_cost_per_month_hybridbenefit > 0.0) or \
+                            (num_cost_per_hour_one_year_reserved_hybridbenefit > 0.0) or (num_cost_per_month_one_year_reserved_hybridbenefit > 0.0) or \
+                            (num_cost_per_hour_three_year_reserved_hybridbenefit > 0.0) or (num_cost_per_month_three_year_reserved_hybridbenefit > 0.0) or \
+                            (num_cost_per_hour_one_year_savings_hybridbenefit > 0.0) or (num_cost_per_month_one_year_savings_hybridbenefit > 0.0) or \
+                            (num_cost_per_hour_three_year_savings_hybridbenefit > 0.0) or (num_cost_per_month_three_year_savings_hybridbenefit > 0.0) or \
+                            (num_cost_per_hour_spot_hybridbenefit > 0.0) or (num_cost_per_month_spot_hybridbenefit > 0.0):
+                                bool_price_hybridbenefit = True
 
                         if bool_price_available:
                             if i == 0:
@@ -211,6 +243,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                                 "geographic": str_geographic,
                                 "geographic_name": str_geographic_name,
                                 "price_available": bool_price_available,
+                                "price_hybridbenefit": bool_price_hybridbenefit,
                                 "price_per_hour": num_cost_per_hour,
                                 "price_per_month": num_cost_per_month,
                                 "price_per_hour_one_year_reserved": num_cost_per_hour_one_year_reserved,
@@ -222,7 +255,19 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                                 "price_per_hour_three_year_savings": num_cost_per_hour_three_year_savings,
                                 "price_per_month_three_year_savings": num_cost_per_month_three_year_savings,
                                 "price_per_hour_spot": num_cost_per_hour_spot,
-                                "price_per_month_spot": num_cost_per_month_spot
+                                "price_per_month_spot": num_cost_per_month_spot,
+                                "price_per_hour_hybridbenefit": num_cost_per_hour_hybridbenefit,
+                                "price_per_month_hybridbenefit": num_cost_per_month_hybridbenefit,
+                                "price_per_hour_one_year_reserved_hybridbenefit": num_cost_per_hour_one_year_reserved_hybridbenefit,
+                                "price_per_month_one_year_reserved_hybridbenefit": num_cost_per_month_one_year_reserved_hybridbenefit,
+                                "price_per_hour_three_year_reserved_hybridbenefit": num_cost_per_hour_three_year_reserved_hybridbenefit,
+                                "price_per_month_three_year_reserved_hybridbenefit": num_cost_per_month_three_year_reserved_hybridbenefit,
+                                "price_per_hour_one_year_savings_hybridbenefit": num_cost_per_hour_one_year_savings_hybridbenefit,
+                                "price_per_month_one_year_savings_hybridbenefit": num_cost_per_month_one_year_savings_hybridbenefit,
+                                "price_per_hour_three_year_savings_hybridbenefit": num_cost_per_hour_three_year_savings_hybridbenefit,
+                                "price_per_month_three_year_savings_hybridbenefit": num_cost_per_month_three_year_savings_hybridbenefit,
+                                "price_per_hour_spot_hybridbenefit": num_cost_per_hour_spot_hybridbenefit,
+                                "price_per_month_spot_hybridbenefit": num_cost_per_month_spot_hybridbenefit
                             }
                             dict_record_data = {str_detail: dict_record_data} 
                             result_prices_list_records.update(dict_record_data)

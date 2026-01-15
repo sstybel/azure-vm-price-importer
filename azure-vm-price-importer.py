@@ -6,6 +6,7 @@ from az_vm_price import az_regions
 from az_vm_price import az_download
 from az_vm_price import az_export_json
 from az_vm_price import az_export_csv
+from az_vm_price import az_export_xls
 from az_vm_price import az_pack
 from az_vm_price import az_prices
 from az_vm_price import az_infos
@@ -39,11 +40,12 @@ is_delete_files_enabled = True
 is_delete_directory_enabled = True
 is_logging_enabled = True
 is_silent_enabled = False
-is_load_pack = True
+is_load_pack = False
 is_save_pack = True
-is_import_json = True
+is_import_json = False
 is_export_json = True
 is_export_csv = True
+is_export_xls = True
 
 azure_prices_of_region = "poland-central"
 #azure_prices_of_region = "all"
@@ -58,7 +60,7 @@ csv_prices_currencies_output_filename = ".\\azure_vm_prices_currencies.csv"
 
 xlsx_prices_output_filename = ".\\azure_vm_prices.xlsx"
 
-json_prices_output_filename = ".\\azure_vm_prices-v02.json"
+json_prices_output_filename = ".\\azure_vm_prices-v03.json"
 
 if __name__ == "__main__":
     start_process = datetime.now()
@@ -111,6 +113,10 @@ if __name__ == "__main__":
 
     if is_export_csv:
         logs = az_export_csv.az_export_prices_list_to_csv(csv_prices_output_filename, csv_prices_currencies_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+
+    if is_export_xls:
+        logs = az_export_xls.az_export_prices_list_to_xls(xlsx_prices_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_delete_files_enabled:
