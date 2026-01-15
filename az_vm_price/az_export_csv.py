@@ -95,7 +95,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
                     csv_prices_record = csv_prices_record + f"\"{str_price_available}\";\"{str_price_hybridbenefit}\";\"{str_price_per_hour}\";\"{str_price_per_month}\";\"{str_price_per_hour_one_year_reserved}\";"
                     csv_prices_record = csv_prices_record + f"\"{str_price_per_month_one_year_reserved}\";\"{str_price_per_hour_three_year_reserved}\";\"{str_price_per_month_three_year_reserved}\";"
                     csv_prices_record = csv_prices_record + f"\"{str_price_per_hour_one_year_savings}\";\"{str_price_per_month_one_year_savings}\";\"{str_price_per_hour_three_year_savings}\";"
-                    csv_prices_record = csv_prices_record + f"\"{str_price_per_month_three_year_savings}\";\"{str_price_per_hour_spot}\";\"{str_price_per_month_spot}\"\n"
+                    csv_prices_record = csv_prices_record + f"\"{str_price_per_month_three_year_savings}\";\"{str_price_per_hour_spot}\";\"{str_price_per_month_spot}\";"
                     csv_prices_record = csv_prices_record + f"\"{str_price_per_hour_hybridbenefit}\";\"{str_price_per_month_hybridbenefit}\";\"{str_price_per_hour_one_year_reserved_hybridbenefit}\";"
                     csv_prices_record = csv_prices_record + f"\"{str_price_per_month_one_year_reserved_hybridbenefit}\";\"{str_price_per_hour_three_year_reserved_hybridbenefit}\";\"{str_price_per_month_three_year_reserved_hybridbenefit}\";"
                     csv_prices_record = csv_prices_record + f"\"{str_price_per_hour_one_year_savings_hybridbenefit}\";\"{str_price_per_month_one_year_savings_hybridbenefit}\";\"{str_price_per_hour_three_year_savings_hybridbenefit}\";"
@@ -128,7 +128,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
             csv_prices_currencies_file.write(f"{csv_head_prices_currencies}\n")
             currencies_prices_list_records = prices_list['currencies_list']
             max_bar = len(currencies_prices_list_records)
-            with alive_bar(max_bar, title="Export prices record to CSV", disable=is_silent_enabled) as bar:
+            with alive_bar(max_bar, title="Export prices currencies record to CSV", disable=is_silent_enabled) as bar:
                 for currencies_price_item in currencies_prices_list_records:
                     currencies_price_item_record = currencies_prices_list_records[currencies_price_item]
                     str_currency = currencies_price_item
