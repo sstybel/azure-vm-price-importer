@@ -55,7 +55,7 @@ azure_prices_of_region = "poland-central"
 log_filename = ".\\azure_vm_price_importer.log"
 
 azpx_input_filename = ".\\az_price_data_20260119105430.azpx"
-azpx_input_filename = ".\\az_price_data_20260119105631.azpx"
+#azpx_input_filename = ".\\az_price_data_20260119105631.azpx"
 
 csv_prices_output_filename = ".\\azure_vm_prices.csv"
 csv_prices_currencies_output_filename = ".\\azure_vm_prices_currencies.csv"
