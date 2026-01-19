@@ -57,7 +57,220 @@ def az_currencies_list_for_region(filename_currencies_data="", is_silent_enabled
 
     return logs, result_currencies_list
 
-def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_data={}, detail_price_data={}, regions_prices_data={}, calculator_price_data={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_calculator_list_for_region(az_region="us-central", az_regions={}, prices_list={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
+    logs = []
+    result_calculator_prices_list_records = {}
+
+    if (f"sku_calculator_{az_region}" in calculator_price_data):
+        filename_sku_calculator = calculator_price_data[f"sku_calculator_{az_region}"]
+
+        try:
+            with open(filename_sku_calculator, 'r', encoding='utf-8') as file_sku_calculator:
+                data_sku_calculator = json.load(file_sku_calculator)
+                data_sku_calculator_data = data_sku_calculator['offers']
+                data_sku_calculator_res = data_sku_calculator['resources']
+            if not is_silent_enabled:
+                print(f"Processed SKU calculator prices from {filename_sku_calculator}")
+            result_sku_calculator = f"OK: Processed SKU calculator prices from {filename_sku_calculator}"
+        except Exception as e:
+            result_sku_calculator = f"ERR-FILE: Unable to process SKU calculator prices from file {filename_sku_calculator}: {e}"
+        if is_logging_enabled:
+            logs.append(result_sku_calculator)
+
+        if not result_sku_calculator.startswith("ERR"):
+            if not is_silent_enabled:
+                print(f"Processing {len(data_sku_calculator_data)} SKU calculator prices from file {filename_sku_calculator}")
+            if is_logging_enabled:
+                logs.append(f"OK: Processing {len(data_sku_calculator_data)} SKU calculator prices from file {filename_sku_calculator}")
+
+            i = 0
+            j = 0
+
+            max_progress = len(data_sku_calculator_data) 
+            with alive_bar(max_progress, title=f"Processing SKU calculator prices", disable=is_silent_enabled) as bar_sku_calculator:
+                for sku_calculator in data_sku_calculator_data:
+                    str_sku = sku_calculator
+                    if not (str_sku in prices_list):
+                        bool_price_available = False
+                        bool_price_hybridbenefit = False
+                        bool_isbasevm = False
+                        bool_haspaygo = False
+                        bool_hasspot = False
+                        bool_isinpreview = False
+                        bool_isvcpu = False
+                        bool_isconstrainedcore = False
+                        str_detail = str_sku.lower()
+                        str_region = az_region.lower()
+                        str_offer_type = data_sku_calculator_data[sku_calculator]['offerType'].lower()
+                        if str_offer_type == "compute":
+                            arr_sku = str_sku.split("-")
+                            str_tier = arr_sku[-1]
+                            str_os = arr_sku[0]
+                            if len(arr_sku) > 3:
+                                str_name = "-".join(str(x) for x in arr_sku[1:-1])
+                            else:
+                                str_name = arr_sku[-2]
+                            str_name2 = str_name.replace("-", "_")
+                            if str_name2 in data_sku_calculator_res:
+                                str_instance_name =  data_sku_calculator_res[str_name2]
+                                str_category = 'generalpurpose'
+                                if str_name in categories:
+                                    str_category = categories[str_name]['category']
+                                    if categories[str_name]['series'] == 'constrained':
+                                        bool_isconstrainedcore = True
+                                str_series = ""
+                                if 'series' in data_sku_calculator_data[sku_calculator]:
+                                    str_series = data_sku_calculator_data[sku_calculator]['series'].lower()
+                                num_cores = 0
+                                if 'cores' in data_sku_calculator_data[sku_calculator]:
+                                    num_cores = data_sku_calculator_data[sku_calculator]['cores']
+                                num_ram = 0
+                                if 'ram' in data_sku_calculator_data[sku_calculator]:
+                                    num_ram = data_sku_calculator_data[sku_calculator]['ram']
+                                num_disksize = 0
+                                if 'diskSize' in data_sku_calculator_data[sku_calculator]:
+                                    num_disksize = data_sku_calculator_data[sku_calculator]['diskSize']
+                                if 'isVcpu' in data_sku_calculator_data[sku_calculator]:
+                                    bool_isvcpu = data_sku_calculator_data[sku_calculator]['isVcpu']
+                                str_region_name = az_regions[str_region]['region_name']
+                                str_country = az_regions[str_region]['country']
+                                str_country_name = az_regions[str_region]['country_name']
+                                str_geographic = az_regions[str_region]['geographic']
+                                str_geographic_name = az_regions[str_region]['geographic_name']
+                                num_cost_per_hour = 0.0
+                                num_cost_per_hour_one_year_reserved = 0.0
+                                num_cost_per_hour_three_year_reserved = 0.0
+                                num_cost_per_hour_one_year_savings = 0.0
+                                num_cost_per_hour_three_year_savings = 0.0
+                                num_cost_per_hour_spot = 0.0
+                                num_cost_per_hour_hybridbenefit = 0.0
+                                num_cost_per_hour_one_year_reserved_hybridbenefit = 0.0
+                                num_cost_per_hour_three_year_reserved_hybridbenefit = 0.0
+                                num_cost_per_hour_one_year_savings_hybridbenefit = 0.0
+                                num_cost_per_hour_three_year_savings_hybridbenefit = 0.0
+                                num_cost_per_hour_spot_hybridbenefit = 0.0
+                                if 'prices' in  data_sku_calculator_data[sku_calculator]:
+                                    data_sku_prices = data_sku_calculator_data[sku_calculator]['prices']
+                                    if len(data_sku_prices) > 0:
+                                        bool_price_available = True
+                                        if 'perhour' in  data_sku_prices:
+                                            bool_haspaygo = True
+                                            num_cost_per_hour = data_sku_prices['perhour'][str_region]['value'] 
+                                        if 'perhouroneyearreserved' in data_sku_prices:
+                                            num_cost_per_hour_one_year_reserved = data_sku_prices['perhouroneyearreserved'][str_region]["value"]
+                                        if 'perhourthreeyearreserved' in data_sku_prices:
+                                            num_cost_per_hour_three_year_reserved = data_sku_prices['perhourthreeyearreserved'][str_region]["value"]
+                                        if 'perunitoneyearsavings' in data_sku_prices:
+                                            num_cost_per_hour_one_year_savings = data_sku_prices['perunitoneyearsavings'][str_region]["value"]
+                                        if 'perunitthreeyearsavings' in data_sku_prices:
+                                            num_cost_per_hour_three_year_savings = data_sku_prices['perunitthreeyearsavings'][str_region]["value"]
+                                        if 'perhourspot' in data_sku_prices:
+                                            bool_hasspot = True
+                                            num_cost_per_hour_spot = data_sku_prices['perhourspot'][str_region]["value"]
+                                        if 'perhourhybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_hybridbenefit = data_sku_prices['perhourhybridbenefit'][str_region]['value']
+                                        if 'perhouroneyearreservedhybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_one_year_reserved_hybridbenefit = data_sku_prices['perhouroneyearreservedhybridbenefit'][str_region]["value"]
+                                        if 'perhourthreeyearreservedhybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_three_year_reserved_hybridbenefit = data_sku_prices['perhourthreeyearreservedhybridbenefit'][str_region]["value"]
+                                        if 'perunitoneyearsavingshybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_one_year_savings_hybridbenefit = data_sku_prices['perunitoneyearsavingshybridbenefit'][str_region]["value"]
+                                        if 'perunitthreeyearsavingshybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_three_year_savings_hybridbenefit = data_sku_prices['perunitthreeyearsavingshybridbenefit'][str_region]["value"]
+                                        if 'perhourspothybridbenefit' in data_sku_prices:
+                                            num_cost_per_hour_spot_hybridbenefit = data_sku_prices['perhourspothybridbenefit'][str_region]["value"]
+                                    num_cost_per_month = num_cost_per_hour * 730
+                                    num_cost_per_month_one_year_reserved = num_cost_per_hour_one_year_reserved * 730
+                                    num_cost_per_month_three_year_reserved = num_cost_per_hour_three_year_reserved * 730
+                                    num_cost_per_month_one_year_savings = num_cost_per_hour_one_year_savings * 730
+                                    num_cost_per_month_three_year_savings = num_cost_per_hour_three_year_savings * 730
+                                    num_cost_per_month_spot = num_cost_per_hour_spot * 730
+                                    num_cost_per_month_hybridbenefit = num_cost_per_hour_hybridbenefit * 730
+                                    num_cost_per_month_one_year_reserved_hybridbenefit = num_cost_per_hour_one_year_reserved_hybridbenefit * 730
+                                    num_cost_per_month_three_year_reserved_hybridbenefit = num_cost_per_hour_three_year_reserved_hybridbenefit * 730
+                                    num_cost_per_month_one_year_savings_hybridbenefit = num_cost_per_hour_one_year_savings_hybridbenefit * 730
+                                    num_cost_per_month_three_year_savings_hybridbenefit = num_cost_per_hour_three_year_savings_hybridbenefit * 730
+                                    num_cost_per_month_spot_hybridbenefit = num_cost_per_hour_spot_hybridbenefit * 730
+                                    if (num_cost_per_hour_hybridbenefit > 0.0) or (num_cost_per_month_hybridbenefit > 0.0) or \
+                                        (num_cost_per_hour_one_year_reserved_hybridbenefit > 0.0) or (num_cost_per_month_one_year_reserved_hybridbenefit > 0.0) or \
+                                        (num_cost_per_hour_three_year_reserved_hybridbenefit > 0.0) or (num_cost_per_month_three_year_reserved_hybridbenefit > 0.0) or \
+                                        (num_cost_per_hour_one_year_savings_hybridbenefit > 0.0) or (num_cost_per_month_one_year_savings_hybridbenefit > 0.0) or \
+                                        (num_cost_per_hour_three_year_savings_hybridbenefit > 0.0) or (num_cost_per_month_three_year_savings_hybridbenefit > 0.0) or \
+                                        (num_cost_per_hour_spot_hybridbenefit > 0.0) or (num_cost_per_month_spot_hybridbenefit > 0.0):
+                                            bool_price_hybridbenefit = True
+
+                                    if bool_price_available:
+                                        dict_record_data = {
+                                            "name": str_name,
+                                            "series": str_series,
+                                            "instance_name": str_instance_name,
+                                            "tier": str_tier,
+                                            "os": str_os,
+                                            "category": str_category,
+                                            "cores": num_cores,
+                                            "ram_gb": num_ram,
+                                            "disk_size_gb": num_disksize,
+                                            "has_paygo": bool_haspaygo,
+                                            "has_spot": bool_hasspot,
+                                            "is_in_preview": bool_isinpreview,
+                                            "is_vcpu": bool_isvcpu,
+                                            "is_constrained_core": bool_isconstrainedcore,
+                                            "is_base_vm": bool_isbasevm,
+                                            "region": str_region,
+                                            "region_name": str_region_name,
+                                            "country": str_country,
+                                            "country_name": str_country_name,
+                                            "geographic": str_geographic,
+                                            "geographic_name": str_geographic_name,
+                                            "price_available": bool_price_available,
+                                            "price_hybridbenefit": bool_price_hybridbenefit,
+                                            "price_per_hour": num_cost_per_hour,
+                                            "price_per_month": num_cost_per_month,
+                                            "price_per_hour_one_year_reserved": num_cost_per_hour_one_year_reserved,
+                                            "price_per_month_one_year_reserved": num_cost_per_month_one_year_reserved,
+                                            "price_per_hour_three_year_reserved": num_cost_per_hour_three_year_reserved,
+                                            "price_per_month_three_year_reserved": num_cost_per_month_three_year_reserved,
+                                            "price_per_hour_one_year_savings": num_cost_per_hour_one_year_savings,
+                                            "price_per_month_one_year_savings": num_cost_per_month_one_year_savings,
+                                            "price_per_hour_three_year_savings": num_cost_per_hour_three_year_savings,
+                                            "price_per_month_three_year_savings": num_cost_per_month_three_year_savings,
+                                            "price_per_hour_spot": num_cost_per_hour_spot,
+                                            "price_per_month_spot": num_cost_per_month_spot,
+                                            "price_per_hour_hybridbenefit": num_cost_per_hour_hybridbenefit,
+                                            "price_per_month_hybridbenefit": num_cost_per_month_hybridbenefit,
+                                            "price_per_hour_one_year_reserved_hybridbenefit": num_cost_per_hour_one_year_reserved_hybridbenefit,
+                                            "price_per_month_one_year_reserved_hybridbenefit": num_cost_per_month_one_year_reserved_hybridbenefit,
+                                            "price_per_hour_three_year_reserved_hybridbenefit": num_cost_per_hour_three_year_reserved_hybridbenefit,
+                                            "price_per_month_three_year_reserved_hybridbenefit": num_cost_per_month_three_year_reserved_hybridbenefit,
+                                            "price_per_hour_one_year_savings_hybridbenefit": num_cost_per_hour_one_year_savings_hybridbenefit,
+                                            "price_per_month_one_year_savings_hybridbenefit": num_cost_per_month_one_year_savings_hybridbenefit,
+                                            "price_per_hour_three_year_savings_hybridbenefit": num_cost_per_hour_three_year_savings_hybridbenefit,
+                                            "price_per_month_three_year_savings_hybridbenefit": num_cost_per_month_three_year_savings_hybridbenefit,
+                                            "price_per_hour_spot_hybridbenefit": num_cost_per_hour_spot_hybridbenefit,
+                                            "price_per_month_spot_hybridbenefit": num_cost_per_month_spot_hybridbenefit
+                                        }
+                                        dict_record_data = {str_sku: dict_record_data} 
+                                        result_calculator_prices_list_records.update(dict_record_data)
+                                        if not is_silent_enabled:
+                                            print(f"Added calculator price for SKU {str_sku} in region {str_region}")
+                                        if is_logging_enabled:
+                                            logs.append(f"OK: Added calculator price for SKU {str_sku} in region {str_region}")
+
+                                        i += 1
+                    else:
+                        j += 1
+                    if not is_silent_enabled:
+                        bar_sku_calculator.text = f"SKU: {str_sku}"
+                        bar_sku_calculator()
+
+    if not is_silent_enabled:
+        print(f"Processed calculator prices count {max_progress} and added {i} new records, skipped {j} existing records.")
+    if is_logging_enabled:
+        logs.append(f"OK: Processed calculator prices count {max_progress} and added {i} new records, skipped {j} existing records.")
+                           
+    return logs, result_calculator_prices_list_records
+
+def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_data={}, detail_price_data={}, regions_prices_data={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
     result_prices_list_records = {}
     result_prices_list = {}
@@ -281,7 +494,13 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                     bar_sku_detail.text = item_bar
                     bar_sku_detail()
 
-    if len(result_prices_list_records) > 0:
+    logs_calculator, result_calculator_prices_list_records = az_calculator_list_for_region(az_region=az_region, az_regions=az_regions, prices_list=result_prices_list_records, calculator_price_data=calculator_price_data, categories=categories, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+    if len(result_calculator_prices_list_records) > 0:
+        result_prices_list_records.update(result_calculator_prices_list_records)
+    if is_logging_enabled:
+        logs.extend(logs_calculator)
+
+    if len(result_prices_list_records) > 0:            
         result_prices_list.update({"prices_list": result_prices_list_records})
 
     logs_currencies, result_currencies_list = az_currencies_list_for_region(initial_data['currencies'], is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)

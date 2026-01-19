@@ -9,11 +9,12 @@ url_currencies = "https://azure.microsoft.com/api/v2/currencies/"
 url_regions = "https://azure.microsoft.com/api/v2/pricing/calculator/regions/"
 url_resources = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/resources/"
 url_oss = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/dropdowns/"
+url_metadata = "https://azure.microsoft.com/api/v4/pricing/virtual-machines/metadata/"
 url_sku_details = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/details/" # url_sku_details + "{os}/"
 url_sku_calculator = "https://azure.microsoft.com/api/v4/pricing/virtual-machines/calculator/" # url_sku_calculator+ "{region}/"
 url_sku_region = "https://azure.microsoft.com/api/v3/pricing/virtual-machines/page/" # url_sku_region + "{os}/" + "{region}/"
 
-def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies", file_regions="azure_regions", file_resources="azure_resources", file_oss="azure_oss", enable_silent=False, enable_logging=False):
+def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies", file_regions="azure_regions", file_resources="azure_resources", file_oss="azure_oss", file_metadata="azure_metadata", enable_silent=False, enable_logging=False):
     logs = []
     results = {}
 
@@ -30,7 +31,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             dir_info = result.split(":")[1].strip()
             print(f"{dir_info}")
         
-        with alive_bar(4, title="Downloading", disable=enable_silent) as bar:
+        with alive_bar(5, title="Downloading", disable=enable_silent) as bar:
             filename_currencies = az_misc.az_create_filename(file_currencies, path=path, prefix_filename="az", fileextension=".json")
             bar_item = f"{filename_currencies}"
             bar_item = bar_item[len(path):]
@@ -106,7 +107,26 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
                 logs.append(result_download)
             if not enable_silent:
                 bar()
-        
+
+            filename_metadata = az_misc.az_create_filename(file_metadata, path=path, prefix_filename="az", fileextension=".json")
+            bar_item = f"{filename_metadata}"
+            bar_item = bar_item[len(path):]
+            if not enable_silent:
+                bar.text = bar_item
+            result_download = az_misc.az_download_url_to_filename(url_metadata, filename_metadata)
+            if result_download.startswith("ERR"):
+                if not enable_silent:
+                    print(f"Error downloading: {filename_metadata}")
+            else:
+                if not enable_silent:
+                    print(f"Downloaded: {filename_metadata}")
+                results.update({"metadata": filename_metadata})
+                i += 1
+            if enable_logging:
+                logs.append(result_download)
+            if not enable_silent:
+                bar()
+
         end_download = datetime.now()
         
         delta_download = end_download - start_download  

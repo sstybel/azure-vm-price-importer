@@ -2,6 +2,7 @@ import argparse
 from datetime import datetime
 
 from az_vm_price import az_oss
+from az_vm_price import az_category
 from az_vm_price import az_regions
 from az_vm_price import az_download
 from az_vm_price import az_export_json
@@ -24,6 +25,7 @@ file_currencies = "azure_currencies"
 file_regions = "azure_regions" 
 file_resources = "azure_resources"
 file_oss = "azure_oss"
+file_metadata = "azure_metadata"
 file_sku_details = "azure_sku_details" # file_sku_details + "_{os}"
 file_sku_calculator = "azure_sku_calculator" # file_sku_calculator + "_{region}"
 file_sku_region = "azure_sku_region" # file_sku_region + "_{os}_{region}"
@@ -42,7 +44,7 @@ is_logging_enabled = True
 is_silent_enabled = False
 is_load_pack = True
 is_save_pack = True
-is_import_json = True
+is_import_json = False
 is_export_json = True
 is_export_csv = True
 is_export_xls = True
@@ -52,15 +54,15 @@ azure_prices_of_region = "poland-central"
 
 log_filename = ".\\azure_vm_price_importer.log"
 
-azpx_input_filename = ".\\az_price_data_20260107111512.azpx"
-#azpx_input_filename = ".\\az_price_data_20260107122903.azpx"
+azpx_input_filename = ".\\az_price_data_20260119105430.azpx"
+azpx_input_filename = ".\\az_price_data_20260119105631.azpx"
 
 csv_prices_output_filename = ".\\azure_vm_prices.csv"
 csv_prices_currencies_output_filename = ".\\azure_vm_prices_currencies.csv"
 
 xlsx_prices_output_filename = ".\\azure_vm_prices.xlsx"
 
-json_prices_output_filename = ".\\azure_vm_prices-v03.json"
+json_prices_output_filename = ".\\azure_vm_prices-v05.json"
 
 if __name__ == "__main__":
     start_process = datetime.now()
@@ -74,7 +76,7 @@ if __name__ == "__main__":
     az_logs.log_start_logs(log_filename, is_logging_enabled)
 
     if not is_load_pack:
-        logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
+        logs, azure_initial_data = az_download.az_download_initial_data(path=path, file_currencies=file_currencies, file_regions=file_regions, file_resources=file_resources, file_oss=file_oss, file_metadata=file_metadata, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
     else:
         logs, path, azure_prices, azure_initial_data, azure_detail_price_data, azure_regions_prices_data, azure_calculator_price_data, azure_config_pack = az_pack.az_load_config_pack(path=".\\", pack_filename=azpx_input_filename, enable_silent=is_silent_enabled, enable_logging=is_logging_enabled)
@@ -87,6 +89,9 @@ if __name__ == "__main__":
     az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     logs, azure_regions = az_regions.az_list_regions(azure_initial_data['regions'], is_silent_enabled, is_logging_enabled)
+    az_logs.log_messages(log_filename, logs, is_logging_enabled)
+    
+    logs, azure_categories = az_category.az_list_categories(azure_initial_data['metadata'], is_silent_enabled, is_logging_enabled)
     az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if not is_load_pack:
@@ -102,14 +107,14 @@ if __name__ == "__main__":
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if not is_import_json and is_export_json:
-        logs, azure_prices_list = az_prices.az_prices_list_for_region(az_region=azure_prices_of_region, az_regions=azure_regions, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        logs, azure_prices_list = az_prices.az_prices_list_for_region(az_region=azure_prices_of_region, az_regions=azure_regions, initial_data=azure_initial_data, detail_price_data=azure_detail_price_data, regions_prices_data=azure_regions_prices_data, calculator_price_data=azure_calculator_price_data, categories=azure_categories, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
         logs = az_export_json.az_export_prices_list_to_json(json_prices_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
     else:
         logs, azure_prices_list = az_export_json.az_import_prices_list_from_json(json_prices_output_filename, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
-        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled) 
 
     if is_export_csv:
         logs = az_export_csv.az_export_prices_list_to_csv(csv_prices_output_filename, csv_prices_currencies_output_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)

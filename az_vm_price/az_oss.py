@@ -26,6 +26,12 @@ def az_list_oss(filename_oss="azure_oss", enable_silent=False, enable_logging=Fa
     
     return logs, oss
 
+def az_find_os_in_str(oss_list, search_str):
+    for os_name, os_info in oss_list.items():
+        if search_str.find(os_name.lower()) > -1:
+            return os_name
+    return ""
+
 def az_list_vm_series(filename_oss="azure_oss", enable_silent=False, enable_logging=False):
     logs = []
     series = {}
