@@ -19,12 +19,12 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
     csv_head_prices =  csv_head_prices + "\"price_per_month_three_year_savings_hybridbenefit\";\"price_per_hour_spot_hybridbenefit\";\"price_per_month_spot_hybridbenefit\""
 
     csv_head_prices_currencies = ""
-    csv_head_prices_currencies = csv_head_prices_currencies + "\"currency\";\"currency_name\";\"currency_info\";\"currency_symbol\";\"currency_conversion\";\"currency_conversion_onprem\";"
+    csv_head_prices_currencies = csv_head_prices_currencies + "\"currency\";\"currency_info\";\"currency_name\";\"currency_symbol\";\"currency_conversion\";\"currency_conversion_onprem\";"
     csv_head_prices_currencies = csv_head_prices_currencies + "\"currency_conversion_modern\""
     
     csv_head_prices = csv_head_prices.replace(";", char_delimiter)
     csv_head_prices_currencies = csv_head_prices_currencies.replace(";", char_delimiter)
-
+    
     i = 0
 
     try:
@@ -35,6 +35,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
         with open(csv_prices_output_filename, 'w', encoding='utf-8') as csv_prices_file:
             csv_prices_file.write(f"{csv_head_prices}\n")
             prices_list_records = prices_list['prices_list']
+            prices_list_records = dict(sorted(prices_list_records.items(), key=lambda item: (item[1]['cores'], item[1]['ram_gb'], item[1]['disk_size_gb'])))
             max_bar = len(prices_list_records)
             with alive_bar(max_bar, title="Export prices record to CSV", disable=is_silent_enabled) as bar:
                 for price_item in prices_list_records:
@@ -127,6 +128,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
         with open(csv_currencies_output_filename, 'w', encoding='utf-8') as csv_prices_currencies_file:
             csv_prices_currencies_file.write(f"{csv_head_prices_currencies}\n")
             currencies_prices_list_records = prices_list['currencies_list']
+            currencies_prices_list_records = dict(sorted(currencies_prices_list_records.items()))            
             max_bar = len(currencies_prices_list_records)
             with alive_bar(max_bar, title="Export prices currencies record to CSV", disable=is_silent_enabled) as bar:
                 for currencies_price_item in currencies_prices_list_records:
@@ -139,7 +141,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
                     str_currency_conversion_onprem = str(currencies_price_item_record['conversion_onprem'])
                     str_currency_conversion_modern = str(currencies_price_item_record['conversion_modern'])
 
-                    csv_prices_currencies_record = f"\"{str_currency}\";\"{str_currency_name}\";\"{str_currency_info}\";\"{str_currency_symbol}\";\"{str_currency_conversion}\";\"{str_currency_conversion_onprem}\";\"{str_currency_conversion_modern}\"\n"
+                    csv_prices_currencies_record = f"\"{str_currency}\";\"{str_currency_info}\";\"{str_currency_name}\";\"{str_currency_symbol}\";\"{str_currency_conversion}\";\"{str_currency_conversion_onprem}\";\"{str_currency_conversion_modern}\"\n"
                     csv_prices_currencies_record = csv_prices_currencies_record.replace(";", char_delimiter).replace(".", char_currency)
 
                     csv_prices_currencies_file.write(csv_prices_currencies_record)
