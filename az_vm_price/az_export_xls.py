@@ -82,7 +82,7 @@ def az_export_prices_list_to_xls(xls_prices_output_filename, prices_list={}, is_
         i = 0
 
         max_bar = len(prices_list_records)
-        with alive_bar(max_bar, title="Export prices record to Excel XLSX", disable=is_silent_enabled) as bar:
+        with alive_bar(max_bar, title="Export prices records to Excel XLSX", disable=is_silent_enabled) as bar:
             for price_item in prices_list_records:
                 price_item_record = prices_list_records[price_item]
                 str_name = price_item_record['name']
@@ -232,7 +232,7 @@ def az_export_prices_list_to_xls(xls_prices_output_filename, prices_list={}, is_
         j = 0
 
         max_bar = len(prices_list_currencies_records)
-        with alive_bar(max_bar, title="Export prices currencies record to Excel XLSX", disable=is_silent_enabled) as bar:
+        with alive_bar(max_bar, title="Export prices currencies records to Excel XLSX", disable=is_silent_enabled) as bar:
             for currency_item in prices_list_currencies_records:
                 currency_item_record = prices_list_currencies_records[currency_item]
                 str_currency = currency_item

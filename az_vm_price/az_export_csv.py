@@ -37,7 +37,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
             prices_list_records = prices_list['prices_list']
             prices_list_records = dict(sorted(prices_list_records.items(), key=lambda item: (item[1]['cores'], item[1]['ram_gb'], item[1]['disk_size_gb'])))
             max_bar = len(prices_list_records)
-            with alive_bar(max_bar, title="Export prices record to CSV", disable=is_silent_enabled) as bar:
+            with alive_bar(max_bar, title="Export prices records to CSV", disable=is_silent_enabled) as bar:
                 for price_item in prices_list_records:
                     price_item_record = prices_list_records[price_item]
                     str_name = price_item_record['name']
@@ -130,7 +130,7 @@ def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_outp
             currencies_prices_list_records = prices_list['currencies_list']
             currencies_prices_list_records = dict(sorted(currencies_prices_list_records.items()))            
             max_bar = len(currencies_prices_list_records)
-            with alive_bar(max_bar, title="Export prices currencies record to CSV", disable=is_silent_enabled) as bar:
+            with alive_bar(max_bar, title="Export prices currencies records to CSV", disable=is_silent_enabled) as bar:
                 for currencies_price_item in currencies_prices_list_records:
                     currencies_price_item_record = currencies_prices_list_records[currencies_price_item]
                     str_currency = currencies_price_item
