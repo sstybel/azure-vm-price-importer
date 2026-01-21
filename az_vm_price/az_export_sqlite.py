@@ -1,3 +1,4 @@
+import os
 import sqlite3
 from alive_progress import alive_bar
 
@@ -9,7 +10,7 @@ def az_bool_to_num(bool_value=False):
 
     return num_bool
 
-def az_export_prices_list_to_sqlite(sqlite_prices_output_filename, prices_list={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_export_prices_list_to_sqlite(sqlite_prices_output_filename, prices_list={}, is_overwrite_sqlite=False, is_add_currency_sqlite=True, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
 
     sqlit_create_table_prices = ""
@@ -80,6 +81,12 @@ def az_export_prices_list_to_sqlite(sqlite_prices_output_filename, prices_list={
             print(f"Export Azure VM prices to SQLite Data Base in file: {sqlite_prices_output_filename}")
         if is_logging_enabled:
             logs.append(f"OK: Export Azure VM prices to SQLite Data Base in file: {sqlite_prices_output_filename}")
+        if is_overwrite_sqlite and os.path.exists(sqlite_prices_output_filename):
+            if not is_silent_enabled:
+                print(f"Overwrite SQLite Data Base in file: {sqlite_prices_output_filename}")
+            if is_logging_enabled:
+                logs.append(f"OK: Overwrite to SQLite Data Base in file: {sqlite_prices_output_filename}")
+            os.remove(sqlite_prices_output_filename)
         with sqlite3.connect(sqlite_prices_output_filename) as sqlite_prices_file:
             if not is_silent_enabled:
                 print(f"Connect to SQLite Data Base in file: {sqlite_prices_output_filename}")
@@ -196,43 +203,52 @@ def az_export_prices_list_to_sqlite(sqlite_prices_output_filename, prices_list={
             if is_logging_enabled:
                 logs.append(f"OK: Exported Azure VM prices count {i} to SQLite Data Base file {sqlite_prices_output_filename}")
 
-            currencies_prices_list_records = prices_list['currencies_list']
-            currencies_prices_list_records = dict(sorted(currencies_prices_list_records.items()))     
+            if is_add_currency_sqlite:
+                currencies_prices_list_records = prices_list['currencies_list']
+                currencies_prices_list_records = dict(sorted(currencies_prices_list_records.items()))     
 
-            i = 0
+                i = 0
 
-            max_bar = len(currencies_prices_list_records)
-            with alive_bar(max_bar, title="Export prices currencies record to SQLite Data Base", disable=is_silent_enabled) as bar:
-                for currencies_price_item in currencies_prices_list_records:
-                    currencies_price_item_record = currencies_prices_list_records[currencies_price_item]
-                    str_currency = currencies_price_item
-                    str_currency_name = currencies_price_item_record['name']
-                    str_currency_info = currencies_price_item_record['info']
-                    str_currency_symbol = currencies_price_item_record['symbol']
-                    str_currency_conversion = str(currencies_price_item_record['conversion'])
-                    str_currency_conversion_onprem = str(currencies_price_item_record['conversion_onprem'])
-                    str_currency_conversion_modern = str(currencies_price_item_record['conversion_modern'])
+                max_bar = len(currencies_prices_list_records)
+                with alive_bar(max_bar, title="Export prices currencies record to SQLite Data Base", disable=is_silent_enabled) as bar:
+                    for currencies_price_item in currencies_prices_list_records:
+                        currencies_price_item_record = currencies_prices_list_records[currencies_price_item]
+                        str_currency = currencies_price_item
+                        str_currency_name = currencies_price_item_record['name']
+                        str_currency_info = currencies_price_item_record['info']
+                        str_currency_symbol = currencies_price_item_record['symbol']
+                        str_currency_conversion = str(currencies_price_item_record['conversion'])
+                        str_currency_conversion_onprem = str(currencies_price_item_record['conversion_onprem'])
+                        str_currency_conversion_modern = str(currencies_price_item_record['conversion_modern'])
 
-                    sqlite_insert_price_currency = ""
-                    sqlite_insert_price_currency += "INSERT INTO az_prices_currency("
-                    sqlite_insert_price_currency += "currency, currency_info, currency_name, currency_symbol, currency_conversion, currency_conversion_onprem, currency_conversion_modern) "
-                    sqlite_insert_price_currency += "VALUES ("
-                    sqlite_insert_price_currency += f"'{str_currency}', '{str_currency_info}', '{str_currency_name}', '{str_currency_symbol}', '{str_currency_conversion}', '{str_currency_conversion_onprem}', '{str_currency_conversion_modern}'"
-                    sqlite_insert_price_currency += ")"
+                        sqlite_insert_price_currency = ""
+                        sqlite_insert_price_currency += "INSERT INTO az_prices_currency("
+                        sqlite_insert_price_currency += "currency, currency_info, currency_name, currency_symbol, currency_conversion, currency_conversion_onprem, currency_conversion_modern) "
+                        sqlite_insert_price_currency += "VALUES ("
+                        sqlite_insert_price_currency += f"'{str_currency}', '{str_currency_info}', '{str_currency_name}', '{str_currency_symbol}', '{str_currency_conversion}', '{str_currency_conversion_onprem}', '{str_currency_conversion_modern}'"
+                        sqlite_insert_price_currency += ")"
 
-                    db_cursor.execute(sqlite_insert_price_currency)
-                    i += 1
+                        db_cursor.execute(sqlite_insert_price_currency)
+                        
+                        i += 1
 
-                    if not is_silent_enabled:
-                        bar.text = str_currency
-                        bar()
-            
-            sqlite_prices_file.commit()
+                        if not is_silent_enabled:
+                            bar.text = str_currency
+                            bar()
+                
+                sqlite_prices_file.commit()
 
-            if not is_silent_enabled:
-                print(f"Exported Azure VM prices currencies count {i} to SQLite Data Base file: {sqlite_prices_output_filename}")
-            if is_logging_enabled:
-                logs.append(f"OK: Exported Azure VM prices currencies count {i} to SQLite Data Base file {sqlite_prices_output_filename}")
+                if not is_silent_enabled:
+                    print(f"Exported Azure VM prices currencies count {i} to SQLite Data Base file: {sqlite_prices_output_filename}")
+                if is_logging_enabled:
+                    logs.append(f"OK: Exported Azure VM prices currencies count {i} to SQLite Data Base file {sqlite_prices_output_filename}")
+
+            if sqlite_prices_file:
+                sqlite_prices_file.close()
+                if not is_silent_enabled:
+                    print(f"Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
+                if is_logging_enabled:
+                    logs.append(f"OK: Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
 
     except Exception as e:
         if not is_silent_enabled:

@@ -9,6 +9,7 @@ from az_vm_price import az_export_json
 from az_vm_price import az_export_csv
 from az_vm_price import az_export_xls
 from az_vm_price import az_export_sqlite
+from az_vm_price import az_export_sql
 from az_vm_price import az_pack
 from az_vm_price import az_prices
 from az_vm_price import az_infos
@@ -50,6 +51,10 @@ is_export_json = True
 is_export_csv = True
 is_export_xls = True
 is_export_sqlite = True
+is_overwrite_sqlite = True
+is_add_currency_sqlite = True
+is_export_sql = True
+is_add_currency_sql = True
 
 azure_prices_of_region = "poland-central"
 #azure_prices_of_region = "all"
@@ -65,6 +70,8 @@ csv_prices_currencies_output_filename = ".\\azure_vm_prices_currencies.csv"
 xlsx_prices_output_filename = ".\\azure_vm_prices.xlsx"
 
 sqlite_prices_outout_filename = ".\\azure_vm_prices.sqlite"
+
+sql_prices_outout_filename = ".\\azure_vm_prices.sql"
 
 json_prices_output_filename = ".\\azure_vm_prices-v05.json"
 
@@ -129,7 +136,11 @@ if __name__ == "__main__":
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_export_sqlite:
-        logs = az_export_sqlite.az_export_prices_list_to_sqlite(sqlite_prices_outout_filename, prices_list=azure_prices_list, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        logs = az_export_sqlite.az_export_prices_list_to_sqlite(sqlite_prices_outout_filename, prices_list=azure_prices_list, is_overwrite_sqlite=is_overwrite_sqlite, is_add_currency_sqlite=is_add_currency_sqlite, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        az_logs.log_messages(log_filename, logs, is_logging_enabled)
+
+    if is_export_sql:
+        logs = az_export_sql.az_export_prices_list_to_sql(sql_prices_outout_filename, prices_list=azure_prices_list, is_add_currency_sql=is_add_currency_sql, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_delete_files_enabled:
