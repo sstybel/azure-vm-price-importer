@@ -71,7 +71,8 @@ xlsx_prices_output_filename = ".\\azure_vm_prices.xlsx"
 
 sqlite_prices_outout_filename = ".\\azure_vm_prices.sqlite"
 
-sql_prices_outout_filename = ".\\azure_vm_prices.sql"
+sql_notation = "mysql"
+sql_prices_outout_filename = ".\\azure_vm_prices." + sql_notation + ".sql"
 
 json_prices_output_filename = ".\\azure_vm_prices-v05.json"
 
@@ -140,7 +141,7 @@ if __name__ == "__main__":
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_export_sql:
-        logs = az_export_sql.az_export_prices_list_to_sql(sql_prices_outout_filename, prices_list=azure_prices_list, is_add_currency_sql=is_add_currency_sql, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+        logs = az_export_sql.az_export_prices_list_to_sql(sql_prices_outout_filename, sql_notation=sql_notation, prices_list=azure_prices_list, is_add_currency_sql=is_add_currency_sql, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
         az_logs.log_messages(log_filename, logs, is_logging_enabled)
 
     if is_delete_files_enabled:
