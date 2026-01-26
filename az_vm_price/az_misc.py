@@ -77,3 +77,54 @@ def az_delete_directory(path=".\\temp\\", files_to_delete=None, if_exists_delete
         logs.append(result) 
 
     return logs
+
+def az_print_table(table, align="", hasHeader=False, pad=2, isGrid=False):
+    table = [row[:] for row in table]
+    numRows, numCols = len(table), len(table[0])
+    align = align.ljust(numCols, "L")
+    align = ["RC".find(c) + 1 for c in align]
+    widths = [max(len(row[col]) for row in table) for col in range(numCols)]
+    
+    if hasHeader:
+        for x in range(numCols):
+            table[0][x] = table[0][x].center(widths[x])
+    for y in range(hasHeader,numRows):
+        for x in range(numCols):
+            c = table[y][x]
+            table[y][x] = [c.ljust, c.rjust, c.center][align[x]](widths[x])
+
+    P = " " * pad
+    LSEP, SEP, RSEP = "│" + P, P + "│" + P, P + "│"
+    lines = ["─" * (widths[col] + pad * 2) for col in range(numCols)]
+
+    drawLine = [isGrid] * numRows
+    drawLine[0] |= hasHeader
+    drawLine[-1] = False
+    if hasHeader or isGrid:
+        gridLine = "├" + "┼".join(lines) + "┤"
+
+    print("┌" + "┬".join(lines) + "┐")
+    for y in range(numRows):
+        print(LSEP + SEP.join(table[y]) + RSEP)
+        if drawLine[y]:
+            print(gridLine)
+    print("└" + "┴".join(lines) + "┘")
+
+def az_show_list_available_regions(az_regions={}):
+    table = [
+        ['Id', 'Region Name', 'Region Full Name', 'Country Name', 'Geographic Name'], 
+    ]
+
+    i = 1
+
+    for region in az_regions:
+        str_id = str(i)
+        str_region = az_regions[region]['region']
+        str_region_name = az_regions[region]['region_name']
+        str_country_name = az_regions[region]['country_name']
+        str_geographic_name = az_regions[region]['geographic_name']
+        table_row = [str_id, str_region, str_region_name, str_country_name, str_geographic_name]
+        table.append(table_row)
+        i += 1
+
+    az_print_table(table, align="RLLLL", hasHeader=True)

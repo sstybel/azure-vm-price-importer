@@ -1,10 +1,10 @@
 from alive_progress import alive_bar
 
-def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_output_filename, prices_list={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_export_prices_list_to_csv(csv_prices_output_filename, csv_currencies_output_filename, delimiter=";", numeric=",", prices_list={}, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
 
-    char_delimiter = ";"
-    char_currency = ","
+    char_delimiter = delimiter
+    char_currency = numeric
 
     csv_head_prices = ""
     csv_head_prices =  csv_head_prices + "\"name\";\"series\";\"instance_name\";\"offer_name\";\"tier\";\"os\";\"category\";\"cores\";\"ram_gb\";\"disk_size_gb\";\"has_paygo\";\"has_spot\";"

@@ -2,12 +2,12 @@ import json
 from datetime import datetime
 from alive_progress import alive_bar
 
-def az_currencies_list_for_region(filename_currencies_data="", is_silent_enabled=False, is_logging_enabled=True):
+def az_currencies_list_for_region(path=".\\temp\\", filename_currencies_data="", is_silent_enabled=False, is_logging_enabled=True):
     logs = []
     result_currencies_list = {}
 
     try:
-        with open(filename_currencies_data, 'r', encoding='utf-8') as file_currencies:
+        with open(path + filename_currencies_data, 'r', encoding='utf-8') as file_currencies:
             currencies_data = json.load(file_currencies)
         result_currencies = f"OK: Processed currencies from file {filename_currencies_data}"
     except Exception as e:
@@ -57,7 +57,7 @@ def az_currencies_list_for_region(filename_currencies_data="", is_silent_enabled
 
     return logs, result_currencies_list
 
-def az_calculator_list_for_region(az_region="us-central", az_regions={}, prices_list={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_calculator_list_for_region(path=".\\temp\\", az_region="us-central", az_regions={}, prices_list={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
     result_calculator_prices_list_records = {}
 
@@ -65,7 +65,7 @@ def az_calculator_list_for_region(az_region="us-central", az_regions={}, prices_
         filename_sku_calculator = calculator_price_data[f"sku_calculator_{az_region}"]
 
         try:
-            with open(filename_sku_calculator, 'r', encoding='utf-8') as file_sku_calculator:
+            with open(path + filename_sku_calculator, 'r', encoding='utf-8') as file_sku_calculator:
                 data_sku_calculator = json.load(file_sku_calculator)
                 data_sku_calculator_data = data_sku_calculator['offers']
                 data_sku_calculator_res = data_sku_calculator['resources']
@@ -270,7 +270,7 @@ def az_calculator_list_for_region(az_region="us-central", az_regions={}, prices_
                            
     return logs, result_calculator_prices_list_records
 
-def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_data={}, detail_price_data={}, regions_prices_data={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_prices_list_for_region(path=".\\temp\\", az_region="us-central", az_regions={}, initial_data={}, detail_price_data={}, regions_prices_data={}, calculator_price_data={}, categories={}, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
     result_prices_list_records = {}
     result_prices_list = {}
@@ -290,7 +290,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
         item_bar = item_bar.split("_")[-1]
         item_bar = f"OS: {item_bar}"
         try:
-            with open(filename_sku_details, 'r', encoding='utf-8') as file_sku_detail:
+            with open(path + filename_sku_details, 'r', encoding='utf-8') as file_sku_detail:
                 data_sku_detail = json.load(file_sku_detail)
             result_sku_detail = f"OK: Processed SKU details from {filename_sku_details}"
         except Exception as e:
@@ -354,7 +354,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                     filename_sku_region = regions_prices_data[sku_region_file]
 
                     try:
-                        with open(filename_sku_region, 'r', encoding='utf-8') as file_sku_region:
+                        with open(path + filename_sku_region, 'r', encoding='utf-8') as file_sku_region:
                             data_sku_region = json.load(file_sku_region)
                         result_sku_region = f"OK: Processed SKU {str_detail} region {str_region} prices from {filename_sku_region}"
                     except Exception as e:
@@ -494,7 +494,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
                     bar_sku_detail.text = item_bar
                     bar_sku_detail()
 
-    logs_calculator, result_calculator_prices_list_records = az_calculator_list_for_region(az_region=az_region, az_regions=az_regions, prices_list=result_prices_list_records, calculator_price_data=calculator_price_data, categories=categories, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+    logs_calculator, result_calculator_prices_list_records = az_calculator_list_for_region(path=path, az_region=az_region, az_regions=az_regions, prices_list=result_prices_list_records, calculator_price_data=calculator_price_data, categories=categories, is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
     if len(result_calculator_prices_list_records) > 0:
         result_prices_list_records.update(result_calculator_prices_list_records)
     if is_logging_enabled:
@@ -503,7 +503,7 @@ def az_prices_list_for_region(az_region="us-central", az_regions={}, initial_dat
     if len(result_prices_list_records) > 0:            
         result_prices_list.update({"prices_list": result_prices_list_records})
 
-    logs_currencies, result_currencies_list = az_currencies_list_for_region(initial_data['currencies'], is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
+    logs_currencies, result_currencies_list = az_currencies_list_for_region(path=path, filename_currencies_data=initial_data['currencies'], is_silent_enabled=is_silent_enabled, is_logging_enabled=is_logging_enabled)
     if is_logging_enabled:
         logs.extend(logs_currencies)
 

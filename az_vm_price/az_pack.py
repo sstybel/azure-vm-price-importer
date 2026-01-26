@@ -7,6 +7,7 @@ def az_save_config_pack(path=".\\temp\\", az_region="all", initial_data=None, de
     logs = []
     config_pack = {}
 
+    path_relativ = ("\\".join(path.split("\\")[:-2])).strip() + "\\"
     conf_filename = f"{path}az_config_pack.json"
 
     pack_struct = {
@@ -29,7 +30,7 @@ def az_save_config_pack(path=".\\temp\\", az_region="all", initial_data=None, de
     if enable_logging:
         logs.append(result)
     
-    pack_filename = ".\\" + path.split("\\")[-2].strip() + ".azpx"
+    pack_filename = "\\".join(path.split("\\")[0:-2]) + "\\" + path.split("\\")[-2].strip() + ".azpx"
     try:
         with zipfile.ZipFile(pack_filename, 'w', zipfile.ZIP_DEFLATED) as zip_pack:
             if not enable_silent:

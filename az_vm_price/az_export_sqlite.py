@@ -243,12 +243,12 @@ def az_export_prices_list_to_sqlite(sqlite_prices_output_filename, prices_list={
                 if is_logging_enabled:
                     logs.append(f"OK: Exported Azure VM prices currencies count {i} to SQLite Data Base file {sqlite_prices_output_filename}")
 
-            if sqlite_prices_file:
-                sqlite_prices_file.close()
-                if not is_silent_enabled:
-                    print(f"Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
-                if is_logging_enabled:
-                    logs.append(f"OK: Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
+        if sqlite_prices_file:
+            sqlite_prices_file.close()
+            if not is_silent_enabled:
+                print(f"Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
+            if is_logging_enabled:
+                logs.append(f"OK: Disconnect SQLite Data Base of file: {sqlite_prices_output_filename}")
 
     except Exception as e:
         if not is_silent_enabled:

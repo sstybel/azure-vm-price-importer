@@ -19,6 +19,9 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
     results = {}
 
     start_download = datetime.now()
+    
+    path_base = ("\\".join(path.split("\\")[:-2])).strip() + "\\"
+    path_relativ = path[len(path_base):]
 
     result = az_misc.az_create_directory(path=path)
     if enable_logging:
@@ -28,7 +31,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
         i = 0
 
         if not enable_silent:
-            dir_info = result.split(":")[1].strip()
+            dir_info = ":".join(result.split(":")[1:]).strip()
             print(f"{dir_info}")
         
         with alive_bar(5, title="Downloading", disable=enable_silent) as bar:
@@ -44,7 +47,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             else:
                 if not enable_silent:
                     print(f"Downloaded: {filename_currencies}")
-                results.update({"currencies": filename_currencies})
+                results.update({"currencies": filename_currencies[len(path_base):]})
                 i += 1
             if enable_logging:
                 logs.append(result_download)
@@ -63,7 +66,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             else:
                 if not enable_silent:
                     print(f"Downloaded: {filename_resources}")
-                results.update({"resources": filename_resources})
+                results.update({"resources": filename_resources[len(path_base):]})
                 i += 1
             if enable_logging:
                 logs.append(result_download)
@@ -82,7 +85,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             else:
                 if not enable_silent:
                     print(f"Downloaded: {filename_regions}")
-                results.update({"regions": filename_regions})
+                results.update({"regions": filename_regions[len(path_base):]})
                 i += 1
             if enable_logging:
                 logs.append(result_download)
@@ -101,7 +104,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             else:
                 if not enable_silent:
                     print(f"Downloaded: {filename_oss}")
-                results.update({"oss": filename_oss})
+                results.update({"oss": filename_oss[len(path_base):]})
                 i += 1
             if enable_logging:
                 logs.append(result_download)
@@ -120,7 +123,7 @@ def az_download_initial_data(path=".\\temp\\", file_currencies="azure_currencies
             else:
                 if not enable_silent:
                     print(f"Downloaded: {filename_metadata}")
-                results.update({"metadata": filename_metadata})
+                results.update({"metadata": filename_metadata[len(path_base):]})
                 i += 1
             if enable_logging:
                 logs.append(result_download)
@@ -156,6 +159,9 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
 
     start_download = datetime.now()
 
+    path_base = ("\\".join(path.split("\\")[:-2])).strip() + "\\"
+    path_relativ = path[len(path_base):]
+
     result = az_misc.az_create_directory(path=path)
     if enable_logging:
         logs.append(result)
@@ -164,7 +170,7 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
         i = 0
 
         if not enable_silent:
-            dir_info = result.split(":")[1].strip()
+            dir_info = ":".join(result.split(":")[1:]).strip()
             print(f"{dir_info}")
 
         if az_region == "" or az_region == "all":
@@ -190,7 +196,7 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                 else:
                     if not enable_silent:
                         print(f"Downloaded: {sku_details_file}")
-                    results_sku_details.update({f"sku_details_{az_os}": sku_details_file})
+                    results_sku_details.update({f"sku_details_{az_os}": sku_details_file[len(path_base):]})
                     i += 1
                 if enable_logging:
                     logs.append(result_download)
@@ -214,7 +220,7 @@ def az_download_regions_prices_data(path=".\\temp\\", file_sku_details="azure_sk
                     else:
                         if not enable_silent:
                             print(f"Downloaded: {sku_region_file}")
-                        results_sku_region.update({f"sku_region_{az_os}_{az_region_name}": sku_region_file})
+                        results_sku_region.update({f"sku_region_{az_os}_{az_region_name}": sku_region_file[len(path_base):]})
                         j += 1
                     if enable_logging:
                         logs.append(result_download)
@@ -251,6 +257,9 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
 
     start_download = datetime.now()
 
+    path_base = ("\\".join(path.split("\\")[:-2])).strip() + "\\"
+    path_relativ = path[len(path_base):]
+
     result = az_misc.az_create_directory(path=path)
     if enable_logging:
         logs.append(result)
@@ -259,7 +268,7 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
         i = 0
 
         if not enable_silent:
-            dir_info = result.split(":")[1].strip()
+            dir_info = ":".join(result.split(":")[1:]).strip()
             print(f"{dir_info}")
 
         if az_region == "" or az_region == "all":
@@ -287,7 +296,7 @@ def az_download_calculator_prices_data(path=".\\temp\\", file_sku_calculator="az
                 else:
                     if not enable_silent:
                         print(f"Downloaded: {sku_calculator_file}")
-                    results_sku_calculator.update({f"sku_calculator_{az_region_name}": sku_calculator_file})
+                    results_sku_calculator.update({f"sku_calculator_{az_region_name}": sku_calculator_file[len(path_base):]})
                     i += 1
                 if enable_logging:
                     logs.append(result_download)

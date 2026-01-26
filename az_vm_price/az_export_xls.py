@@ -1,11 +1,12 @@
 import xlsxwriter
 from alive_progress import alive_bar
 
-def az_export_prices_list_to_xls(xls_prices_output_filename, prices_list={}, is_silent_enabled=False, is_logging_enabled=True):
+def az_export_prices_list_to_xls(xls_prices_output_filename, delimiter=";", numeric=",", prices_list={}, is_silent_enabled=False, is_logging_enabled=True):
     logs = []
 
     char_currency = "."
-    xls_char_currency = ","
+    char_delimiter = delimiter
+    xls_char_currency = numeric
 
     try:
         if not is_silent_enabled:
