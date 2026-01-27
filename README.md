@@ -175,7 +175,7 @@ C:\Apps> azure-vm-price-importer.exe download -p Z:\Download_Folder\ -r all -l y
 > <br />**Example mode 2**: Processing downloaded data from **`all`** regions and processing it under the account of the `poland-central` region of Azure.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe save -a Z:\Download_Folder\az_price_data_20260126133223.azpx -r poland-central -p Z:\JSON_Folder\ -j auto -l yes
+C:\Apps> azure-vm-price-importer.exe save -a Z:\Download_Folder\az_price_data_20260126133223.azpx -r poland-central -p Z:\JSON_Folder\ -j auto -l yes
 ```
 
 > <br>Output **JSON** file: `Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json`
@@ -185,7 +185,7 @@ azure-vm-price-importer.exe save -a Z:\Download_Folder\az_price_data_20260126133
 > <br />**Example mode 3a**: Exporting processed data in a **JSON** file for the specified region to **CSV** format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_CSV_Folder\ -f csv -e auto -c auto -d ; -n , -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_CSV_Folder\ -f csv -e auto -c auto -d ; -n , -l yes
 ```
 
 > <br>Output **CSV** prices file: `az_vm_prices_poland-central_20260126210953.csv`
@@ -197,7 +197,7 @@ azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central
 > <br />**Example mode 3b**: Exporting processed data in a **JSON** file for the specified region to **Excel - XLSX** format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_XLS_Folder\ -f xlsx -e auto -n , -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_XLS_Folder\ -f xlsx -e auto -n , -l yes
 ```
 
 > <br>Output **Excel - XLSX** file: `az_vm_prices_poland-central_20260126211051.xlsx`
@@ -207,7 +207,7 @@ azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central
 > <br />**Example mode 3c**: Exporting processed data in a **JSON** file for the specified region to **SQLite** database format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQLite_Folder\ -f sqlite -e auto -o yes -a yes -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQLite_Folder\ -f sqlite -e auto -o yes -a yes -l yes
 ```
 
 > <br>Output **SQLite** database file: `az_vm_prices_poland-central_20260126214445.sqlite`
@@ -217,7 +217,7 @@ azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central
 > <br />**Example mode 3d**: Exporting processed data in a **JSON** file for the specified region to **SQL** notation for **SQLite** database format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-SQLite_Folder\ -f sql-sqlite -e auto -a yes -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-SQLite_Folder\ -f sql-sqlite -e auto -a yes -l yes
 ```
 
 > <br>Output **SQL** notation file for **SQLite** database: `az_vm_prices_poland-central_sqlite_20260126214855.sql`
@@ -227,7 +227,7 @@ azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central
 ><br />**Example mode 3e**: Exporting processed data in a **JSON** file for the specified region to **SQL** notation for **MySQL** database format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-MySQL_Folder\ -f sql-mysql -e auto -a yes -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-MySQL_Folder\ -f sql-mysql -e auto -a yes -l yes
 ```
 
 > <br>Output **SQL** notation file for **MySQL** database: `az_vm_prices_poland-central_mysql_20260126214925.sql`
@@ -237,7 +237,7 @@ azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central
 > <br />**Example mode 3f**: Exporting processed data in a **JSON** file for the specified region to **SQL** notation for **PostgreSQL** database format.<br>&nbsp;
 
 ```sh
-azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-PostgreSQL_Folder\ -f sql-postgresql -e auto -a yes -l yes
+C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_poland-central_20260126141844.json -p Z:\Export_SQL-PostgreSQL_Folder\ -f sql-postgresql -e auto -a yes -l yes
 ```
 
 > <br>Output **SQL** notation file for **PostgreSQL** database: `az_vm_prices_poland-central_postgresql_20260126214952.sql`
