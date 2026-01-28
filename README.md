@@ -13,7 +13,7 @@ This application therefore works in three (3) modes:
 
 Additionally, the application is able to list all currently available Azure regions (*currently 59 regions – as of January 2026*).
 
-![Alt Examples](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
+![Example GIF](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
 
 ## Syntax of the `azure-vm-price-importer.exe` for all commands:
 
@@ -244,6 +244,10 @@ C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_polan
 
 > <br>Output **SQL** notation file for **PostgreSQL** database: `az_vm_prices_poland-central_postgresql_20260126214952.sql`
 > <br>&nbsp;
+
+&nbsp;
+
+![Example GIF](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
 
 &nbsp;
 
