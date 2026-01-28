@@ -13,7 +13,7 @@ This application therefore works in three (3) modes:
 
 Additionally, the application is able to list all currently available Azure regions (*currently 59 regions – as of January 2026*).
 
-![Alt Examples](examples\videos\azure-vm-price-importer.gif)
+![Alt Examples](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
 
 ## Syntax of the `azure-vm-price-importer.exe` for all commands:
 
