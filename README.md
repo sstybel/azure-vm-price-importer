@@ -1,5 +1,7 @@
 # Azure VM (Virtual Machine) Price Importer
 
+<a href="https://github.com/sstybel/azure-vm-price-importer/releases/latest"><img alt="Static Badge" src="https://img.shields.io/badge/download-red?style=for-the-badge&label=stable&color=%23FF0000&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer%2Freleases%2Flatest"></a> ![GitHub Release](https://img.shields.io/github/v/release/sstybel/azure-vm-price-importer?sort=date&display_name=release&style=for-the-badge&logo=github&label=release&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sstybel/azure-vm-price-importer/total?style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer)
+
 This program allows you to download VM price lists from a specific region or all Azure regions (*currently 59 regions as of January 2026*).
 
 The downloaded price list for a specific Azure region can then be processed and saved to an exchange file in `JSON` format. 
@@ -248,6 +250,16 @@ C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_polan
 &nbsp;
 
 ![Example GIF](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
+
+&nbsp;
+
+## Download
+
+<a href="https://github.com/sstybel/azure-vm-price-importer/releases/latest"><img alt="Static Badge" src="https://img.shields.io/badge/download-red?style=for-the-badge&label=stable&color=%23FF0000&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer%2Freleases%2Flatest"></a> ![GitHub Release](https://img.shields.io/github/v/release/sstybel/azure-vm-price-importer?sort=date&display_name=release&style=for-the-badge&logo=github&label=release&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer) ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/sstybel/azure-vm-price-importer/total?style=for-the-badge&logo=github&link=https%3A%2F%2Fgithub.com%2Fsstybel%2Fazure-vm-price-importer)
+
+##  GitHub
+
+![GitHub stats](https://github-readme-stats-sigma-five.vercel.app/api?username=sstybel&show_icons=true&theme=react&hide_title=true&include_all_commits=true)
 
 &nbsp;
 
