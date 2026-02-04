@@ -247,11 +247,9 @@ C:\Apps> azure-vm-price-importer.exe export -j Z:\JSON_Folder\az_vm_prices_polan
 > <br>Output **SQL** notation file for **PostgreSQL** database: `az_vm_prices_poland-central_postgresql_20260126214952.sql`
 > <br>&nbsp;
 
-&nbsp;
+## Example Video
 
 ![Example GIF](https://github.com/sstybel/azure-vm-price-importer/blob/main/examples/videos/azure-vm-price-importer.gif)
-
-&nbsp;
 
 ## Download
 
