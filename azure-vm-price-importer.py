@@ -20,7 +20,7 @@ from az_vm_price import az_misc
 
 str_version = "1.00"
 str_app_name ="Azure VM Prices Importer - ver. " + str_version
-str_author = "Copyright (c) 2025 - 2026 by Sebastian Stybel, www.BONO.Edu.PL"
+str_author = "Copyright (c) 2025 - 2026 by Sebastian Stybel, www.BONO-IT.pl"
 
 pathname = "az_price_data"
 path = ".\\"
